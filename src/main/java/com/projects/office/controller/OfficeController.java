@@ -1,8 +1,8 @@
 package com.projects.office.controller;
 
 import com.projects.office.dto.DepartmentDTO;
-import com.projects.office.model.Department;
 import com.projects.office.service.OfficeService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +37,7 @@ public class OfficeController {
     }
 
     @PostMapping
-    private ResponseEntity<DepartmentDTO> addDepartment(@RequestBody DepartmentDTO departmentDTO){
+    private ResponseEntity<DepartmentDTO> addDepartment(@Valid @RequestBody DepartmentDTO departmentDTO){
         DepartmentDTO departmentDTO1 = officeService.addDepartment(departmentDTO);
         if(departmentDTO1 == null){
             return ResponseEntity.notFound().build();
@@ -49,6 +49,8 @@ public class OfficeController {
                                                            @PathVariable int id){
         return ResponseEntity.ok(officeService.updateDepartment(departmentDTO,id));
     }
+
+    //PATCH is pending
 
     @DeleteMapping("/{id}")
     private ResponseEntity<Boolean> deleteById(@PathVariable int id){
