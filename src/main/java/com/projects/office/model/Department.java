@@ -24,6 +24,7 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String title;
+    private String category;
     private Boolean isActive;
     @CreationTimestamp
     private LocalDateTime createdAt;

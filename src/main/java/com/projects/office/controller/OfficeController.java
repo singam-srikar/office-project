@@ -1,6 +1,7 @@
 package com.projects.office.controller;
 
 import com.projects.office.dto.DepartmentDTO;
+import com.projects.office.exception.ResourceNotFoundException;
 import com.projects.office.service.OfficeService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/department")
@@ -29,11 +31,10 @@ public class OfficeController {
 
     @GetMapping("/{id}")
     private ResponseEntity<DepartmentDTO> getDepartmentById(@PathVariable int id){
-       DepartmentDTO departmentDTO = officeService.getDepartmentById(id);
-       if(departmentDTO==null){
-           return ResponseEntity.notFound().build();
-       }
-        return ResponseEntity.ok(departmentDTO);
+       Optional<DepartmentDTO> departmentDTO = officeService.getDepartmentById(id);
+        return departmentDTO
+                .map(departmentDTO1 -> ResponseEntity.ok(departmentDTO1))
+                .orElseThrow(() -> new ResourceNotFoundException("Department not found for id "+id));
     }
 
     @PostMapping
@@ -53,11 +54,8 @@ public class OfficeController {
     //PATCH is pending
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<Boolean> deleteById(@PathVariable int id){
-        boolean isDeleted = officeService.deleteById(id);
-        if(isDeleted){
-            return ResponseEntity.ok(true);
-        }
-       return ResponseEntity.notFound().build();
+    private ResponseEntity deleteById(@PathVariable int id){
+        officeService.deleteById(id);
+        return ResponseEntity.ok(true);
     }
 }

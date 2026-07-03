@@ -1,12 +1,15 @@
 package com.projects.office.service;
 
 import com.projects.office.dto.DepartmentDTO;
+import com.projects.office.exception.ResourceNotFoundException;
 import com.projects.office.model.Department;
 import com.projects.office.repository.OfficeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.lang.module.ResolutionException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,9 +32,9 @@ public class OfficeService {
                 .collect(Collectors.toList());
     }
 
-    public DepartmentDTO getDepartmentById(int id){
-        Department department = officeRepository.findById(id).orElse(null);
-        return modelMapper.map(department, DepartmentDTO.class);
+    public Optional<DepartmentDTO> getDepartmentById(int id){
+        return officeRepository.findById(id)
+                .map(department1 -> modelMapper.map(department1, DepartmentDTO.class));
     }
 
     public DepartmentDTO addDepartment(DepartmentDTO departmentDTO) {
@@ -39,25 +42,21 @@ public class OfficeService {
         return modelMapper.map(department,DepartmentDTO.class);
     }
 
-    public boolean deleteById(int id) {
-        boolean isExists = checkDepartmentIsPresent(id);
-        if(isExists){
-            officeRepository.deleteById(id);
-        }
-        return isExists;
+    public void deleteById(int id) {
+        checkDepartmentIsPresent(id);
+        officeRepository.deleteById(id);
     }
 
-    public boolean checkDepartmentIsPresent(int id) {
-        return officeRepository.existsById(id);
+    public void checkDepartmentIsPresent(int id) {
+         boolean isPresent = officeRepository.existsById(id);
+         if(!isPresent) throw new ResourceNotFoundException("Department not found for id "+id);
     }
 
     public DepartmentDTO updateDepartment(DepartmentDTO departmentDTO, int id) {
-        boolean isExist = checkDepartmentIsPresent(id);
-        if(isExist){
+         checkDepartmentIsPresent(id);
             Department department = modelMapper.map(departmentDTO,Department.class);
             Department department1 = officeRepository.save(department);
             return modelMapper.map(department1, DepartmentDTO.class);
-        }
-        return null;
+
     }
 }
