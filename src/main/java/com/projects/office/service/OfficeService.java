@@ -39,6 +39,7 @@ public class OfficeService {
 
     public DepartmentDTO addDepartment(DepartmentDTO departmentDTO) {
         Department department = modelMapper.map(departmentDTO, Department.class);
+        officeRepository.save(department);
         return modelMapper.map(department,DepartmentDTO.class);
     }
 

@@ -7,34 +7,31 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandling {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiError> handleNoSuchElentException(ResourceNotFoundException exception){
+    public ResponseEntity<ApiResponse<?>> handleNoSuchElementException(ResourceNotFoundException exception){
         ApiError apiError = ApiError.builder()
                 .httpStatus(HttpStatus.NOT_FOUND)
                 .message(exception.getMessage())
-                .timestamp(LocalDateTime.now())
                 .build();
-        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+        return buildErrorResponseEntity(apiError);
     }
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleAllException(Exception exception){
+    public ResponseEntity<ApiResponse<?>> handleAllException(Exception exception){
         ApiError apiError = ApiError.builder()
                 .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
                 .message(exception.getMessage())
-                .timestamp(LocalDateTime.now())
                 .build();
-        return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
+        return buildErrorResponseEntity(apiError);
     }
 
     //to handle multiple input validation
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiError> handleArgumentNotValidException(MethodArgumentNotValidException methodArgumentNotValidException){
+    public ResponseEntity<ApiResponse<?>> handleArgumentNotValidException(MethodArgumentNotValidException methodArgumentNotValidException){
        List<String> errorList =  methodArgumentNotValidException.
                 getBindingResult()
                 .getAllErrors()
@@ -45,9 +42,12 @@ public class GlobalExceptionHandling {
                 .httpStatus(HttpStatus.BAD_REQUEST)
                 .message("Invalid input")
                 .subErrors(errorList)
-                .timestamp(LocalDateTime.now())
                 .build();
-        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+        return buildErrorResponseEntity(apiError);
 
+    }
+
+    private ResponseEntity<ApiResponse<?>> buildErrorResponseEntity(ApiError apiError){
+        return new ResponseEntity<>(new ApiResponse<>(apiError),apiError.getHttpStatus());
     }
 }
