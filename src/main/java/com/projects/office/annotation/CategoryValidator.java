@@ -13,3 +13,6 @@ public class CategoryValidator implements ConstraintValidator<CategoryValidation
         return validList.contains(category);
     }
 }
+
+
+

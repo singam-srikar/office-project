@@ -1,6 +1,7 @@
 package com.projects.office.dto;
 
 import com.projects.office.annotation.CategoryValidation;
+import com.projects.office.annotation.PrimeNumberValidation;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -15,14 +16,17 @@ public class DepartmentDTO {
     public String title;
     @CategoryValidation
     public String category;
+    @PrimeNumberValidation
+    public int positions;
     public Boolean isActive;
 
     public DepartmentDTO() {
     }
 
-    public DepartmentDTO(String category, Boolean isActive, String title) {
-        this.category = category;
-        this.isActive = isActive;
+    public DepartmentDTO(String title, String category, int positions, Boolean isActive) {
         this.title = title;
+        this.category = category;
+        this.positions = positions;
+        this.isActive = isActive;
     }
 }

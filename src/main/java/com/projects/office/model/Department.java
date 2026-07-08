@@ -25,6 +25,7 @@ public class Department {
     private Integer id;
     private String title;
     private String category;
+    public int positions;
     private Boolean isActive;
     @CreationTimestamp
     private LocalDateTime createdAt;
